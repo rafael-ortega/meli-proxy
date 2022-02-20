@@ -3,5 +3,6 @@
 /proxylog_ip.txt
 /proxylog_path.txt
 /target/*
-/target
+target
 /target/classes
+*.class
