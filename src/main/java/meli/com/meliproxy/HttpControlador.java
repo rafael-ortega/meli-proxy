@@ -32,28 +32,30 @@ public class HttpControlador {
             String origen = exchange.getRemoteAddress().getAddress().toString();
             System.out.println("meliproxy-gestionarSolicitud: la ip origen es:\" + origen");
 
-            Archivo archivo = new Archivo();
-            if (!archivo.leerArchivo(origen, "")) {
+            
+            if (!Archivo.leerArchivo(origen, "")) {
                 System.out.println("meliproxy-gestionarSolicitud: la ip origen es:\" + origen");
                 System.out.println("meliproxy-gestionarSolicitud: la ip aun no existe en archivo");
             }
 
-            if (archivo.leerArchivo("", path)) {
+            if (Archivo.leerArchivo("", path)) {
 
                 String respuesta = "no puede acceder a este recurso por PATH..";
-                exchange.sendResponseHeaders(CODIGO_RESPUESTA, respuesta.getBytes().length);
+                exchange.sendResponseHeaders(301, respuesta.getBytes().length);
 
                 OutputStream os = exchange.getResponseBody();
                 os.write(respuesta.getBytes());
                 os.close();
 
             } else {
-                archivo.escribirArchivo(path, true);
-                if (!archivo.leerArchivo(origen, "")) {
-                    archivo.escribirArchivo(origen, false);
+                Archivo.escribirArchivo(path, true);
+                if (!Archivo.leerArchivo(origen, "")) {
+                    Archivo.escribirArchivo(origen, false);
 
                     exchange.getResponseHeaders().add("Location", "https://api.mercadolibre.com" + path);
-                    exchange.sendResponseHeaders(CODIGO_RESPUESTA, path.getBytes().length);
+                    exchange.getResponseHeaders().add("Cache-Control", "no-cache");
+                    exchange.getResponseHeaders().add("Cache-Control", "no-store");
+                    exchange.sendResponseHeaders(301, path.getBytes().length);
 
                     OutputStream os = exchange.getResponseBody();
 
@@ -62,7 +64,7 @@ public class HttpControlador {
 
                 } else {
 
-                    String respuesta = "no puede acceder a este recurso..";
+                    String respuesta = "No puede acceder a este recurso..";
                     exchange.sendResponseHeaders(CODIGO_RESPUESTA, respuesta.getBytes().length);
 
                     OutputStream os = exchange.getResponseBody();
@@ -95,4 +97,25 @@ public class HttpControlador {
         os.close();
 
     }
+        
+        public static void eliminarHistorico(HttpExchange exchange) throws IOException {
+            
+            String respuesta = "respuesta";
+           if(Archivo.eliminarArchivos())
+                respuesta = "Se ha eliminado el historico del Proxy Meli";
+                else 
+                respuesta = "NO se ha eliminado el historico del Proxy Meli";
+                
+            final int CODIGO_RESPUESTA = 200;
+        
+        exchange.sendResponseHeaders(CODIGO_RESPUESTA, respuesta.getBytes().length);
+
+        OutputStream os = exchange.getResponseBody();
+
+        os.write(respuesta.getBytes());
+
+        os.close();
+
+        
+        }
 }

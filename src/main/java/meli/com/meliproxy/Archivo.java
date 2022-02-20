@@ -97,4 +97,22 @@ public class Archivo {
         return exiteValor;
     }
 
+    public static boolean eliminarArchivos() {
+
+       Boolean respuesta=false;
+        File ficheroPath = new File("proxylog_ip.txt");
+        File ficheroIp = new File("proxylog_path.txt");
+        
+        try {
+            if (ficheroIp.delete() && ficheroPath.delete())
+            respuesta=true;
+        } catch (Exception e) {
+            System.err.println("Ocurrio un error eliminando los archivos logs:"+e.getMessage());
+        }
+        
+        
+        return respuesta;
+        
+    }
+
 }

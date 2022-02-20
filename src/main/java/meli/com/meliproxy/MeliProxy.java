@@ -23,7 +23,7 @@ public class MeliProxy {
 
         System.out.println("meliproxy-main: inicio el proxy");
 
-        final int puerto = 9021;
+        final int puerto = 9024;
         try {
             HttpServer httpd = HttpServer.create(new InetSocketAddress(puerto), 0);
             System.out.println("meliproxy-main: se crea puerto:" + puerto);
@@ -31,6 +31,7 @@ public class MeliProxy {
             //HttpContext ctx = httpd.createContext("/",Prueba::gestionarSolicitud);
             httpd.createContext("/categories", HttpControlador::gestionarSolicitud);
             httpd.createContext("/estadisticas", HttpControlador::obtenerEstadisticas);
+            httpd.createContext("/eliminarHistorico", HttpControlador::eliminarHistorico);
 
             httpd.setExecutor(null);
             //ctx.setHandler(Prueba::gestionarSolicitud);
