@@ -32,6 +32,7 @@ public class MeliProxy {
             httpd.createContext("/categories", HttpControlador::gestionarSolicitud);
             httpd.createContext("/estadisticas", HttpControlador::obtenerEstadisticas);
             httpd.createContext("/eliminarHistorico", HttpControlador::eliminarHistorico);
+            httpd.createContext("/obtenerHistorico", HttpControlador::obtenerHistorico);
 
             httpd.setExecutor(null);
             //ctx.setHandler(Prueba::gestionarSolicitud);

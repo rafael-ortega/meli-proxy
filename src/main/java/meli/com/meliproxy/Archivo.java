@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package meli.com.meliproxy;
 
 import java.io.BufferedReader;
@@ -14,6 +9,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 
 /**
  *
@@ -22,7 +19,7 @@ import java.util.Arrays;
 public class Archivo {
 
     static final int MAXIMO_PATH = 3;
-    static final int MAXIMO_IP = 3;
+    static final int MAXIMO_IP = 5;
 
     public static void escribirArchivo(String texto, Boolean isPath) {
 
@@ -42,14 +39,56 @@ public class Archivo {
 
             bw.write("\n" + texto);
             bw.close();
+            file=null;
         } catch (Exception e) {
             System.out.println("Error creando el archivo:" + e.getMessage() + "causa:" + e.getCause() + "traza:" + Arrays.toString(e.getStackTrace()));
         }
     }
-
+    
+    
+    public static HashMap contarElementosArchivo() throws FileNotFoundException, IOException {
+    
+        File doc = new File("proxylog_ip.txt");
+        String strng;
+        ArrayList lineas = new ArrayList();
+        HashMap contador=new HashMap<>();
+        int frecuencia;
+        
+        try {
+            
+            BufferedReader obj = new BufferedReader(new FileReader(doc));
+        
+          while ((strng = obj.readLine()) != null) {
+                lineas.add(strng);
+          
+         }
+          
+          
+          
+          for (int i = 0; i < lineas.size(); i++) {
+              
+                if(lineas.get(i)!=null && !lineas.get(i).equals("") ){
+                frecuencia=Collections.frequency(lineas, lineas.get(i));
+                contador.put(lineas.get(i), frecuencia);
+                }
+                
+          }
+          
+          System.out.println("Arreglo:");
+          System.out.println(contador);
+               
+         
+        } catch (Exception e) {
+            System.out.println("Error en contarElementosArchivo(): Mensaje"+e.getMessage()+" Cusa:"+e.getCause()+" Trace:"+e.getStackTrace());
+            e.printStackTrace();
+        }
+        
+         return contador;    
+    }
+    
     public static boolean leerArchivo(String ipOrigen, String path) throws FileNotFoundException, IOException {
 
-        Boolean exiteValor = false;
+        Boolean existeValor = false;
         try {
 
             System.out.println("la ip que esta llegando es:" + ipOrigen);
@@ -72,18 +111,18 @@ public class Archivo {
             for (int i = 0; i <= lineas.size(); i++) {
 
                 System.out.println("pos 1:" + lineas.get(i));
-                if (!path.isEmpty()) {
+                if (!path.isEmpty() && path.equalsIgnoreCase(lineas.get(i).toString())) {
                     System.out.println("el path ya existe.......");
                     contador++;
                     if (contador > MAXIMO_PATH) {
-                        exiteValor = true;
+                        existeValor = true;
                     }
                 } else {
                     if (ipOrigen.equalsIgnoreCase(lineas.get(i).toString())) {
                         System.out.println("la ip es igual al leer desde el archivo...");
                         contador++;
                         if (contador > MAXIMO_IP) {
-                            exiteValor = true;
+                            existeValor = true;
                         }
                     }
 
@@ -94,7 +133,7 @@ public class Archivo {
             System.out.println("ocurrio un erro en metodo leerArchivo:" + e.getMessage());
         }
 
-        return exiteValor;
+        return existeValor;
     }
 
     public static boolean eliminarArchivos() {
@@ -110,7 +149,8 @@ public class Archivo {
             System.err.println("Ocurrio un error eliminando los archivos logs:"+e.getMessage());
         }
         
-        
+        ficheroPath=null;
+        ficheroIp=null;
         return respuesta;
         
     }
